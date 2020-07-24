@@ -58,16 +58,6 @@ variable "datalake_v2" {
   default     = false
 }
 
-variable "blob_dns_zone_name" {
-  description = "The name of the Private Blob DNS Zone to lookup to register the Private Endpoint"
-  type        = string
-}
-
-variable "blob_dns_zone_rg_name" {
-  description = "The name of the Resource Group where the Blob DNS Zone exists"
-  type        = string
-}
-
 variable "private_blob_dns_zone_name" {
   description = "The name of the privatelink blob DNS zone in Azure to register Blob Private Endpoints"
   type        = string

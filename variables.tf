@@ -67,3 +67,15 @@ variable "private_blob_dns_zone_id" {
   description = "The ID of the privatelink blob DNS zone in Azure to register Blob Private Endpoints. Use a Data lookup block in the calling code if not known."
   type        = string
 }
+
+
+variable "dns_zone_rg" {
+  description = "The Resource group where the DNS Private Zone lives."
+  type        = string
+}
+
+variable "provider_alias" {
+  description = "Add a value to this variable if the DNS Private Zone is in a separate subscription"
+  type        = string
+  default     = "azurerm"
+}

@@ -68,3 +68,12 @@ variable "blob_dns_zone_rg_name" {
   type        = string
 }
 
+variable "private_blob_dns_zone_name" {
+  description = "The name of the privatelink blob DNS zone in Azure to register Blob Private Endpoints"
+  type        = string
+}
+
+variable "private_blob_dns_zone_id" {
+  description = "The ID of the privatelink blob DNS zone in Azure to register Blob Private Endpoints. Use a Data lookup block in the calling code if not known."
+  type        = string
+}

@@ -55,9 +55,3 @@ resource "azurerm_private_endpoint" "pe" {
     private_dns_zone_ids = [var.private_blob_dns_zone_id]
   }
 }
-
-data "azurerm_dns_zone" "blob_zone" {
-  provider            = var.provider_alias
-  name                = "privatelink.blob.core.windows.net"
-  resource_group_name = var.dns_zone_rg
-}

@@ -27,7 +27,6 @@ module "storageaccount" {
   pe_vnet_name                = "privateendpoint-vnet-name"
   private_blob_dns_zone_id    = "/subscriptions/xxxxxxxxuuuuuuuuu/resourceGroups/dnszoneResourceGroup/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net"
   private_blob_dns_zone_name  = "privatelink.blob.core.windows.net"
-  dns_zone_rg                 = "dnszoneResourceGroup"
   tags = { Terraform = true,
     environment = "DEV"
   }

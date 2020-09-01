@@ -1,5 +1,5 @@
 # terraform-azurerm-storage-account
-Terraform module to create a storage account with a Private Endpoint
+Terraform module to create a storage account with a Private Endpoint.
 
 ## Example Usage
 ```hcl
@@ -27,8 +27,12 @@ module "storageaccount" {
 
 ## Arguments
 
-## Create a Storage Account with a Private Endpoint in Azure
-
-This Terraform module deploys a new Storage Account in Azure.
-
-The module will create a single blob container with a private endpoint to provide more control over network access to the blob containers.
+| Name | Type | Required | Description |
+| --- | --- | --- | --- |
+| `sa_resource_group_name` | `string` | true | The name of the resource group where the new Storage Account Will be created. |
+| `storage_account_name` | `string` | true | The name of the Storage Account. |
+| `pe_vnet_resource_group_name` | `string` | true | The name of the resource group where the vNET for the Private Endpoint resides. |
+| `pe_subnet_name` | `string` | true | The name of the Subnet where the Private Endpoint will be created. |
+| `private_blob_dns_zone_id` | `string` | true | The ID of the blob DNS zone for the private endpoitn registration. |
+| `private_blob_dns_zone_name` | `string` | true | The name of the DNS zone. |
+| `tags` | `map` | false | A map of tags to apply to the new storage account and Private endpoint. EG - {Environment = "DEV", CreatedBy = "AC", Terraform = true} |

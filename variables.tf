@@ -3,6 +3,8 @@
 # #######################################################
 variable "tags" {
   description = "tags to apply to the new resources"
+  type        = map(string)
+  default     = null
 }
 
 variable "location" {
@@ -17,7 +19,6 @@ variable "location" {
 variable "sa_resource_group_name" {
   description = "The name of a Resource Group to deploy the new Storage Account into."
   type        = string
-  default     = null
 }
 
 variable "pe_vnet_resource_group_name" {

@@ -1,4 +1,4 @@
-# terraform-azurerm-storageaccount
+# terraform-azurerm-storage-account
 Terraform module to create a storage account with a Private Endpoint
 
 

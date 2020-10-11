@@ -33,9 +33,9 @@ resource "azurerm_storage_account" "pe_storage_account" {
   tags                     = var.tags
 }
 
-###############################
+################################
 # Creates a new Private Endpoint
-###############################
+################################
 
 resource "azurerm_private_endpoint" "pe" {
   name                = "${azurerm_storage_account.pe_storage_account.name}-pe"
@@ -47,11 +47,11 @@ resource "azurerm_private_endpoint" "pe" {
     name                           = "${azurerm_storage_account.pe_storage_account.name}-connection"
     is_manual_connection           = false
     private_connection_resource_id = azurerm_storage_account.pe_storage_account.id
-    subresource_names              = ["blob"]
+    subresource_names              = var.resource_type
   }
 
   private_dns_zone_group {
-    name                 = var.private_blob_dns_zone_name
-    private_dns_zone_ids = [var.private_blob_dns_zone_id]
+    name                 = var.private_dns_zone_name
+    private_dns_zone_ids = [var.private_dns_zone_id]
   }
 }

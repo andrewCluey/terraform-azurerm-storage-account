@@ -59,13 +59,20 @@ variable "datalake_v2" {
   default     = false
 }
 
-variable "private_blob_dns_zone_name" {
-  description = "The name of the privatelink blob DNS zone in Azure to register Blob Private Endpoints"
+ variable "resource_type" {
+   description = "Type : LIST. The Container type to create. Can be blob, file, queue,table."
+   type        = list(string)
+   default     = "blob"
+ }
+ 
+
+variable "private_dns_zone_name" {
+  description = "The name of the privatelink DNS zone in Azure to register the Private Endpoint resource type."
   type        = string
 }
 
-variable "private_blob_dns_zone_id" {
-  description = "The ID of the privatelink blob DNS zone in Azure to register Blob Private Endpoints. Use a Data lookup block in the calling code if not known."
+variable "private_dns_zone_id" {
+  description = "The ID of the privatelink DNS zone in Azure to register Private Endpoints. Use a Data lookup block in the calling code if not known."
   type        = string
 }
 

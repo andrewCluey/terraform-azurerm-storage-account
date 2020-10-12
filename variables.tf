@@ -59,12 +59,12 @@ variable "datalake_v2" {
   default     = false
 }
 
- variable "resource_type" {
-   description = "Type : LIST. The Container type to create. Can be blob, file, queue,table."
-   type        = list(string)
-   default     = "blob"
- }
- 
+variable "resource_type" {
+  description = "Type : LIST. The Container type to create. Can be blob, file, queue,table."
+  type        = list(string)
+  default     = ["blob"]
+}
+
 
 variable "private_dns_zone_name" {
   description = "The name of the privatelink DNS zone in Azure to register the Private Endpoint resource type."

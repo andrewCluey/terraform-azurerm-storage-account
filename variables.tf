@@ -81,3 +81,9 @@ variable "provider_alias" {
   type        = string
   default     = "azurerm"
 }
+
+variable "tls_ver" {
+  description = "Minimum overison of TLS that must be used to connect to the storage account"
+  type        = string
+  default     = "TLS1_2"
+}

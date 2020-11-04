@@ -9,7 +9,3 @@ output "private_endpoint_ip_address" {
 output "primary_blob_endpoint" {
   value = azurerm_storage_account.pe_storage_account.primary_blob_endpoint
 }
-
-output "primary_connection_string" {
-  value = azurerm_storage_account.pe_storage_account.primary_connection_string
-}

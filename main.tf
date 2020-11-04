@@ -31,6 +31,7 @@ resource "azurerm_storage_account" "pe_storage_account" {
   account_replication_type = var.repl_type
   is_hns_enabled           = var.datalake_v2
   tags                     = var.tags
+  min_tls_version          = var.tls_ver
 }
 
 ################################

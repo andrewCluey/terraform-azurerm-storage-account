@@ -9,3 +9,7 @@ output "private_endpoint_ip_address" {
 output "primary_blob_endpoint" {
   value = azurerm_storage_account.pe_storage_account.primary_blob_endpoint
 }
+
+output "id" {
+  value = azurerm_storage_account.pe_storage_account.id
+}

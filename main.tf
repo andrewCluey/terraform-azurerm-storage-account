@@ -20,7 +20,7 @@ data "azurerm_resource_group" "storage_rg" {
 resource "azurerm_storage_account" "pe_storage_account" {
   name                     = var.storage_account_name
   resource_group_name      = data.azurerm_resource_group.storage_rg.name
-  location                 = data.azurerm_resource_group.storage_rg.location
+  location                 = var.location
   account_tier             = var.account_tier
   account_replication_type = var.repl_type
   is_hns_enabled           = var.datalake_v2

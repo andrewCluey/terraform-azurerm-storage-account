@@ -2,24 +2,12 @@
 # Creates a new Storage Account with Private Endpoints
 ######################################################
 
-# ################################################
-# DATA LOOKUPS
-# Get data for resources already deployed.
-# Takes inputs from user specified variables file.
-# ################################################
-
-
-# Resource Group where the Storage Account & corresponding Private Endpoint will be created
-data "azurerm_resource_group" "storage_rg" {
-  name = var.sa_resource_group_name
-}
-
-######################
+############################
 # Create the Storage Account
-######################
+############################
 resource "azurerm_storage_account" "pe_storage_account" {
   name                     = var.storage_account_name
-  resource_group_name      = data.azurerm_resource_group.storage_rg.name
+  resource_group_name      = var.sa_resource_group_name
   location                 = var.location
   account_tier             = var.account_tier
   account_replication_type = var.repl_type
@@ -35,7 +23,7 @@ resource "azurerm_storage_account" "pe_storage_account" {
 resource "azurerm_private_endpoint" "pe" {
   name                = "${azurerm_storage_account.pe_storage_account.name}-pe"
   location            = var.location
-  resource_group_name = data.azurerm_resource_group.storage_rg.name
+  resource_group_name = var.sa_resource_group_name
   subnet_id           = var.pe_subnet_id
 
   private_service_connection {

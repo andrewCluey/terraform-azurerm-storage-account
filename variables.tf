@@ -22,7 +22,7 @@ variable "sa_resource_group_name" {
 }
 
 variable "pe_subnet_id" {
-  description = "The name of the subnet where the Private Endpoint will be created."
+  description = "The ID of the subnet where the Private Endpoint will be created."
   type        = string
 }
 

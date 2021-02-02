@@ -10,7 +10,7 @@ variable "tags" {
 variable "location" {
   description = "The Azure Region of where the Storage Account & Private Endpoint are to be created."
   type        = string
-  default     = "West Europe"
+  default     = "westeurope"
 }
 
 # ##########################################
@@ -21,17 +21,7 @@ variable "sa_resource_group_name" {
   type        = string
 }
 
-variable "pe_vnet_resource_group_name" {
-  description = "The name of the Resource group where the vNET for the Private Endpoint exists."
-  type        = string
-}
-
-variable "pe_vnet_name" {
-  description = "The name of the vNet where the Private Endpoint subnet is located."
-  type        = string
-}
-
-variable "pe_subnet_name" {
+variable "pe_subnet_id" {
   description = "The name of the subnet where the Private Endpoint will be created."
   type        = string
 }

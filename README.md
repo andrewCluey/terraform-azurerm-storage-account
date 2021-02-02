@@ -8,24 +8,31 @@ resource "azurerm_resource_group" "test" {
   location = "West Europe"
 }
 
-module "storageaccount" {
-  source  = "gitrepo/storageaccount/azurerm"
-  version = "0.0.8"
+module "storage-account" {
+  source  = "andrewCluey/storage-account/azurerm"
+  version = "1.4.0"
 
+  location                    = var.location
   sa_resource_group_name      = azurerm_resource_group.test.name
-  storage_account_name        = "sstorageaccountname"
+  storage_account_name        = "storageaccountname"
   pe_vnet_resource_group_name = "privateendpoint-vnet-resourcegroup"
   pe_subnet_name              = "privateendpoint-subnet-name"
   pe_vnet_name                = "privateendpoint-vnet-name"
+  resource_type               = ["blob"]
   private_blob_dns_zone_id    = "/subscriptions/xxxxxxxxuuuuuuuuu/resourceGroups/dnszoneResourceGroup/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net"
   private_blob_dns_zone_name  = "privatelink.blob.core.windows.net"
+  repl_type                   = "LRS"
+  tls_ver                     = "TLS1_2"
+  
   tags = { Terraform = true,
     environment = "DEV"
   }
 }
+ 
+
 ```
 
-## Arguments
+## Required Arguments
 
 | Name | Type | Required | Description |
 | --- | --- | --- | --- |

@@ -21,11 +21,6 @@ variable "sa_resource_group_name" {
   type        = string
 }
 
-variable "pe_subnet_id" {
-  description = "The ID of the subnet where the Private Endpoint will be created."
-  type        = string
-}
-
 variable "repl_type" {
   description = "The replication type required for the new Storage Account. Options are LRS; GRS; RAGRS; ZRS"
   type        = string
@@ -43,33 +38,41 @@ variable "storage_account_name" {
   type        = string
 }
 
+variable "default_container_name" {
+  description = "The name to assign to the default blob container that is created."
+  default     = "blob-default"
+  type        = string
+}
+
 variable "datalake_v2" {
   description = "Enabled Hierarchical name space for Data Lake Storage gen 2"
   type        = bool
   default     = false
 }
 
+/*
+## Removed this variable. Fixed default container as Blob.
+# Will add new feature to include deployment of other storage resources such as files/queues etc
+
 variable "resource_type" {
-  description = "Type : LIST. The Container type to create. Can be blob, file, queue,table."
+  description = "Type : LIST. The Container type to create. Can be blob, file, queue, table."
   type        = list(string)
   default     = ["blob"]
 }
+*/
 
 
-variable "private_dns_zone_name" {
-  description = "The name of the privatelink DNS zone in Azure to register the Private Endpoint resource type."
+variable "pe_subnet_id" {
+  description = "The ID of the subnet where the Private Endpoint will be created."
   type        = string
 }
 
-variable "private_dns_zone_id" {
-  description = "The ID of the privatelink DNS zone in Azure to register Private Endpoints. Use a Data lookup block in the calling code if not known."
-  type        = string
-}
-
-variable "provider_alias" {
-  description = "Add a value to this variable if the DNS Private Zone is in a separate subscription"
-  type        = string
-  default     = "azurerm"
+variable "private_dns_zone" {
+  description = "The name and ID of the privatelink DNS zone in Azure to register the Private Endpoint resource type."
+  type        = object({
+    id   = string
+    name = string
+  })
 }
 
 variable "tls_ver" {

@@ -11,7 +11,7 @@ output "id" {
 }
 
 output "private_endpoint_ip_address" {
-  value = azurerm_private_endpoint.pe_blob.private_service_connection.private_ip_address
+  value = azurerm_private_endpoint.pe_blob.private_service_connection[0].private_ip_address
 }
 
 output "default_blob_endpoint" {

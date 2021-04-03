@@ -1,5 +1,5 @@
 # terraform-azurerm-storage-account
-Terraform module to create a storage account with a Private Endpoint.
+Terraform module to create an Azure Storage Account with a Private Endpoint.
 
 ## Example Use
 ```hcl
@@ -38,9 +38,9 @@ module "storage-account" {
     environment = "DEV"
   }
 }
- 
 
 ```
+
 
 ## Required Arguments
 
@@ -76,5 +76,8 @@ The following document explains this in great detail, but the diagrams showing t
 
 https://docs.microsoft.com/en-us/azure/private-link/private-endpoint-dns
 
+## Storage Account
+To access a storage account in Azure you reference a provided FQDN. By default this will route over the Public Internet. For all sorts of reasons, many organisations do not want to access storage accounts in this way (or many other Azure resources for that matter).
 
+This is where Private Endpoints come in.
 

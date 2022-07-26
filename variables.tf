@@ -38,11 +38,12 @@ variable "storage_account_name" {
   type        = string
 }
 
-variable "default_container_name" {
-  description = "The name to assign to the default blob container that is created."
-  default     = "blob-default"
-  type        = string
+variable "blob_containers" {
+  type        = list(any)
+  description = "List all the blob containers to create."
+  default     = []
 }
+
 
 variable "datalake_v2" {
   description = "Enabled Hierarchical name space for Data Lake Storage gen 2"
@@ -65,18 +66,31 @@ variable "resource_type" {
 variable "pe_subnet_id" {
   description = "The ID of the subnet where the Private Endpoint will be created."
   type        = string
+  default     = ""
 }
 
 variable "private_dns_zone" {
-  description = "The name and ID of the privatelink DNS zone in Azure to register the Private Endpoint resource type."
-  type        = object({
-    id   = string
-    name = string
-  })
+  type        = any
+  default     = {}
+  description = <<EOF
+  The name and ID of the privatelink DNS zone in Azure to register the Private Endpoint resource type.
+  Requires an input map object. EXAMPLE:
+  private-dns_zone = {
+    name = "privatelink.blob.azure.windows.net"
+    id   = "hyoiuhyou-8y98/uhi"
+  }
+EOF
 }
 
 variable "tls_ver" {
   description = "Minimum overison of TLS that must be used to connect to the storage account"
   type        = string
   default     = "TLS1_2"
+}
+
+
+variable "deploy_private_endpoint" {
+  type        = bool
+  description = "Deploy a private endopoint with the storage accoubnt. True/False."
+  default     = false
 }

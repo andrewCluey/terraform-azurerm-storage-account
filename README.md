@@ -18,24 +18,19 @@ resource "azurerm_resource_group" "test" {
   location = "West Europe"
 }
 
+
 module "storage-account" {
   source  = "andrewCluey/storage-account/azurerm"
-  version = "1.5.0"
+  version = "2.0.0"
 
-  location                    = var.location
-  sa_resource_group_name      = azurerm_resource_group.test.name
-  storage_account_name        = "storageaccountname"
-  pe_subnet_id                = local.pe_subnet_id
-  resource_type               = ["blob"]
-  private_dns_zone = [{
-    id   = "/subscriptions/xxxxxxxxuuuuuuuuu/resourceGroups/dnszoneResourceGroup/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net"
+  storage_account_name    = "sadevtesting"
+  sa_resource_group_name  = azurerm_resource_group.rg_testpe.name
+  blob_containers         = ["default", "logs", "stuff"]
+  deploy_private_endpoint = true
+  pe_subnet_id            = local.pe_subnet_id
+  private_dns_zone        = {
     name = "privatelink.blob.core.windows.net"
-}]
-  repl_type                   = "LRS"
-  tls_ver                     = "TLS1_2"
-  
-  tags = { Terraform = true,
-    environment = "DEV"
+    id   = "lkjhkIDofPrivateDNSzonejdoiwjoi"
   }
 }
 

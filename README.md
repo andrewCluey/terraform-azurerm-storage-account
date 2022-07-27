@@ -64,9 +64,9 @@ In short, the basic requirements are:
 Whilst this isn't overly difficult to implement, it should be done with proper planning, design and change control. In a large corporate environment, the possibility of there being a random subnet, somewhere that hasn't been documented correctly is, sadly, all too common.
 
 ### DNS Forwarding
-This is perhaps the most complex bit, but only because there are so many moving parts required. At a high level, you need to create a new Private DNZ Zone in Azure, deploy at least one new Virtual Machine (preferably at least 2). If your on-premise DNS Servers are Windows, then deploy Windows VMs in Azure. These VMs will be DNS forwarding servers, so they don't need to be huge beasts, just enough to comfortably deal with DNS traffic.
+This is perhaps the most complex bit, but only because there are so many moving parts required. At a high level, you need to create a new Private DNS Zone in Azure, deploy at least one new Virtual Machine (preferably at least 2). If your on-premise DNS Servers are Windows, then deploy Windows VMs in Azure. These VMs will be DNS forwarding servers, so they don't need to be huge beasts, just enough to comfortably deal with DNS traffic.
 
-The following document explains this in great detail, but the diagrams showing the end to end flow of different scenarios, are pretty brilliant and explain exactly how it works. In fact, I'd start by looking at these before reading the whole document. Particularly the diagram under ```On-premises workloads using a DNS forwarder``` section as this is most likely the integration required in an enterprise environment.
+The following document explains this in great detail and the diagrams showing are a great at showing the steps involved in different scenarios. In fact, I'd start by looking at these before reading the whole document.
 
 
 https://docs.microsoft.com/en-us/azure/private-link/private-endpoint-dns

@@ -24,7 +24,7 @@ provider "azurerm" {
 
 resource "azurerm_resource_group" "rg_testpe" {
   name     = "rg-test-sa"
-  location = "uksouth"
+  location = "westeurope"
 }
 
 # Creates Storage Account in default location (WestEurope).

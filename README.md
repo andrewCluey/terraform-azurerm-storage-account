@@ -1,78 +1,140 @@
+<!-- BEGIN_TF_DOCS -->
 # terraform-azurerm-storage-account
-Terraform module to create an Azure Storage Account with a Private Endpoint.
 
-## Example Use
+Creates a new Storage Account with option to create containers and Blob Private Endpoint.
+Future changes include:
+  - Network ACL options.
+  - Option to create File shares, Queues and Tables
+
+## Example - default
 ```hcl
-data "azurerm_subnet" "pe_default" {
-  name                 = default_subnet
-  virtual_network_name = default_vnet
-  resource_group_name  = networkk_rg
-}
-
-locals {
-  pe_subnet_id = data.azurerm_subnet.pe_default.id
-}
-
-resource "azurerm_resource_group" "test" {
-  name     = "resources"
-  location = "West Europe"
-}
-
-
-module "storage-account" {
-  source  = "andrewCluey/storage-account/azurerm"
-  version = "2.0.0"
-
-  storage_account_name    = "sadevtesting"
-  sa_resource_group_name  = azurerm_resource_group.rg_testpe.name
-  blob_containers         = ["default", "logs", "stuff"]
-  deploy_private_endpoint = true
-  pe_subnet_id            = local.pe_subnet_id
-  private_dns_zone        = {
-    name = "privatelink.blob.core.windows.net"
-    id   = "lkjhkIDofPrivateDNSzonejdoiwjoi"
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "= 3.10.0"
+    }
   }
 }
 
+provider "azurerm" {
+  features {}
+}
+
+
+resource "azurerm_resource_group" "rg_testpe" {
+  name     = "rg-test-sa"
+  location = "uksouth"
+}
+
+# Creates Storage Account in default location (WestEurope).
+module "storage_account" {
+  source  = "andrewCluey/storage-account/azurerm"
+  version = "2.0.0"
+
+  storage_account_name    = "sasimple83e32q"
+  sa_resource_group_name  = azurerm_resource_group.rg_testpe.name
+  blob_containers         = local.blob_containers_tocreate
+}
 ```
 
+## Example - with PE
 
-## Required Arguments
+```hcl
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "= 3.10.0"
+    }
+  }
+}
 
-| Name | Type | Required | Description |
-| --- | --- | --- | --- |
-| `sa_resource_group_name` | `string` | true | The name of the resource group where the new Storage Account Will be created. |
-| `storage_account_name` | `string` | true | The name of the Storage Account. |
-| `pe_vnet_resource_group_name` | `string` | true | The name of the resource group where the vNET for the Private Endpoint resides. |
-| `pe_subnet_name` | `string` | true | The name of the Subnet where the Private Endpoint will be created. |
-| `private_blob_dns_zone_id` | `string` | true | The ID of the blob DNS zone for the private endpoitn registration. |
-| `private_blob_dns_zone_name` | `string` | true | The name of the DNS zone. |
-| `tags` | `map` | false | A map of tags to apply to the new storage account and Private endpoint. EG - {Environment = "DEV", CreatedBy = "AC", Terraform = true} |
-
-
-## Private Endpoints
-Private Endpoints are a really great way to ensure access to Azure Resources is only via private networks. This could be via an ExpressRoute link, or site-to-site VPN (On-Premise TO Azure). Key point is that this will change the default behaviour for the Resource being deployed, so that no acess is over the public Internet, instead via a private interface with a valid private IP address on the corporate network.
-
-There are several external dependencies for Private Endpoints to work correctly, but they are well worth investing the time and effort to get working. Fortunately, this isn't as complex as you might think.
-
-In short, the basic requirements are:
-
-- Some form of Site-Site connection (VPN, ExpressRoute etc)
-- Azure vNETs created with IP address spaces that are valid on the Corproate network, likely with peering enabled to make use of the site-to-site link (think Hub/Spoke layout). IMPORTANTLY - avoid overlapping IP addresses at all costs.
-- DNS Forwarders. Probably the trickiest bit about the whole thing. However, if you understand DNS, then you should be fine. 
-
-Whilst this isn't overly difficult to implement, it should be done with proper planning, design and change control. In a large corporate environment, the possibility of there being a random subnet, somewhere that hasn't been documented correctly is, sadly, all too common.
-
-### DNS Forwarding
-This is perhaps the most complex bit, but only because there are so many moving parts required. At a high level, you need to create a new Private DNS Zone in Azure, deploy at least one new Virtual Machine (preferably at least 2). If your on-premise DNS Servers are Windows, then deploy Windows VMs in Azure. These VMs will be DNS forwarding servers, so they don't need to be huge beasts, just enough to comfortably deal with DNS traffic.
-
-The following document explains this in great detail and the diagrams showing are a great at showing the steps involved in different scenarios. In fact, I'd start by looking at these before reading the whole document.
+provider "azurerm" {
+  features {}
+}
 
 
-https://docs.microsoft.com/en-us/azure/private-link/private-endpoint-dns
+resource "azurerm_resource_group" "rg_testpe" {
+  name     = "rg-test-sa"
+  location = "uksouth"
+}
+resource "azurerm_virtual_network" "vn_testpe" {
+  name                = "testpe-vnet"
+  address_space       = ["10.0.0.0/16"]
+  location            = azurerm_resource_group.rg_testpe.location
+  resource_group_name = azurerm_resource_group.rg_testpe.name
+}
 
-## Storage Account
-To access a storage account in Azure you reference a provided FQDN. By default this will route over the Public Internet. For all sorts of reasons, many organisations do not want to access storage accounts in this way (or many other Azure resources for that matter).
+resource "azurerm_subnet" "sn_testpe" {
+  name                 = "example-subnet"
+  resource_group_name  = azurerm_resource_group.rg_testpe.name
+  virtual_network_name = azurerm_virtual_network.vn_testpe.name
+  address_prefixes     = ["10.0.1.0/24"]
+}
 
-This is where Private Endpoints come in.
+# create private DNS zone
+resource "azurerm_private_dns_zone" "dns_testpe" {
+  name                = "privatelink.blob.core.windows.net"
+  resource_group_name = azurerm_resource_group.rg_testpe.name
+}
 
+# define local variables to use as inputs into the module.
+locals {
+  blob_containers_tocreate = ["z-blob", "default", "u2-blob", "autotest", "f-blob", "x-blob" ]
+}
+
+module "storage_account" {
+  source  = "andrewCluey/storage-account/azurerm"
+  version = "2.0.0"
+
+  storage_account_name    = "sasimple83e32q"
+  location                = azurerm_resource_group.rg_testpe.location
+  sa_resource_group_name  = azurerm_resource_group.rg_testpe.name
+  blob_containers         = local.blob_containers_tocreate
+  deploy_private_endpoint = true
+  pe_subnet_id            = azurerm_subnet.sn_testpe.id
+  private_dns_zone        = {
+    name = azurerm_private_dns_zone.dns_testpe.name
+    id   = azurerm_private_dns_zone.dns_testpe.id
+  }
+}
+
+output "blobs" {
+  description = "All blob containers created."
+  value       = sort(module.storage_account.blobs)
+}
+
+output "private_endpoint_ip_address" {
+  description = "The private IP Address assigned to the Private Endpoint."
+  value       = module.storage_account.private_endpoint_ip_address
+}
+```
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_account_tier"></a> [account\_tier](#input\_account\_tier) | The Storage Tier for the new Account. Options are 'Standard' or 'Premium' | `string` | `"Standard"` | no |
+| <a name="input_blob_containers"></a> [blob\_containers](#input\_blob\_containers) | List all the blob containers to create. | `list(any)` | `[]` | no |
+| <a name="input_datalake_v2"></a> [datalake\_v2](#input\_datalake\_v2) | Enabled Hierarchical name space for Data Lake Storage gen 2 | `bool` | `false` | no |
+| <a name="input_deploy_private_endpoint"></a> [deploy\_private\_endpoint](#input\_deploy\_private\_endpoint) | Deploy a private endopoint with the storage accoubnt. True/False. | `bool` | `false` | no |
+| <a name="input_location"></a> [location](#input\_location) | The Azure Region of where the Storage Account & Private Endpoint are to be created. | `string` | `"westeurope"` | no |
+| <a name="input_pe_subnet_id"></a> [pe\_subnet\_id](#input\_pe\_subnet\_id) | The ID of the subnet where the Private Endpoint will be created. | `string` | `""` | no |
+| <a name="input_private_dns_zone"></a> [private\_dns\_zone](#input\_private\_dns\_zone) | The name and ID of the privatelink DNS zone in Azure to register the Private Endpoint resource type.<br>  Requires an input map object. EXAMPLE:<br>  private-dns\_zone = {<br>    name = "privatelink.blob.azure.windows.net"<br>    id   = "hyoiuhyou-8y98/uhi"<br>  } | `any` | `{}` | no |
+| <a name="input_repl_type"></a> [repl\_type](#input\_repl\_type) | The replication type required for the new Storage Account. Options are LRS; GRS; RAGRS; ZRS | `string` | `"GRS"` | no |
+| <a name="input_sa_resource_group_name"></a> [sa\_resource\_group\_name](#input\_sa\_resource\_group\_name) | The name of a Resource Group to deploy the new Storage Account into. | `string` | n/a | yes |
+| <a name="input_storage_account_name"></a> [storage\_account\_name](#input\_storage\_account\_name) | The name to assign to the new Storage Account. | `string` | n/a | yes |
+| <a name="input_tags"></a> [tags](#input\_tags) | tags to apply to the new resources | `map(string)` | `null` | no |
+| <a name="input_tls_ver"></a> [tls\_ver](#input\_tls\_ver) | Minimum overison of TLS that must be used to connect to the storage account | `string` | `"TLS1_2"` | no |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| <a name="output_blobs"></a> [blobs](#output\_blobs) | A list of all the blobs that have been created (if specified). |
+| <a name="output_id"></a> [id](#output\_id) | The ID of the newly created Storage Account. |
+| <a name="output_private_endpoint_ip_address"></a> [private\_endpoint\_ip\_address](#output\_private\_endpoint\_ip\_address) | The IP Address of the Private Endpoint. |
+| <a name="output_storage_account_name"></a> [storage\_account\_name](#output\_storage\_account\_name) | The name of the new Storage Account. |
+| <a name="output_storage_name"></a> [storage\_name](#output\_storage\_name) | The primary blob endpoint. |
+<!-- END_TF_DOCS -->

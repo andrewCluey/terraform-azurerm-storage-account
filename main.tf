@@ -1,6 +1,11 @@
-######################################################
-# Creates a new Storage Account with Private Endpoints
-######################################################
+/**
+ * # terraform-azurerm-storage-account
+ *
+ * Creates a new Storage Account with option to create containers and Blob Private Endpoint.
+ * Future changes include:
+ *   - Network ACL options.
+ *   - Option to create File shares, Queues and Tables
+ */
 
 ############################
 # Create the Storage Account

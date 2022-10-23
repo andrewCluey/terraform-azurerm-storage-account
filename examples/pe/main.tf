@@ -12,9 +12,6 @@ provider "azurerm" {
 }
 
 
-# As with all Terraform modules, we can use local values and create new resources 
-# for ensuring all dependencies (Resource Groups, betworks etc) are fed into the module for testing.
-# Also, to carry out any necessary post-processing of the results from the module in preparation for writing test assertions.
 resource "azurerm_resource_group" "rg_testpe" {
   name     = "rg-test-sa"
   location = "uksouth"
@@ -39,15 +36,14 @@ resource "azurerm_private_dns_zone" "dns_testpe" {
   resource_group_name = azurerm_resource_group.rg_testpe.name
 }
 
+# define local variables to use as inputs into the module.
 locals {
   blob_containers_tocreate = ["z-blob", "default", "u2-blob", "autotest", "f-blob", "x-blob" ]
-  sorted_blobs_tocreate = sort(local.blob_containers_tocreate)
-  sort_blob_output      = sort(module.storage_account.blobs)
 }
 
-
 module "storage_account" {
-  source   = "../../"
+  source  = "andrewCluey/storage-account/azurerm"
+  version = "2.0.0"
 
   storage_account_name    = "sasimple83e32q"
   location                = azurerm_resource_group.rg_testpe.location
@@ -61,12 +57,12 @@ module "storage_account" {
   }
 }
 
-
 output "blobs" {
-  description = "description"
-  value       = local.sort_blob_output
+  description = "All blob containers created."
+  value       = sort(module.storage_account.blobs)
 }
 
 output "private_endpoint_ip_address" {
+  description = "The private IP Address assigned to the Private Endpoint."
   value       = module.storage_account.private_endpoint_ip_address
 }

@@ -1,4 +1,5 @@
 output "storage_account_name" {
+  description = "The name of the new Storage Account."
   value = azurerm_storage_account.storage_account.name
 }
 
@@ -8,13 +9,20 @@ output "blobs" {
 }
 
 output "id" {
+  description = "The ID of the newly created Storage Account."
   value = azurerm_storage_account.storage_account.id
 }
 
 output "private_endpoint_ip_address" {
+  description = "The IP Address of the Private Endpoint."
   value = length(azurerm_private_endpoint.pe_blob) > 0 ? azurerm_private_endpoint.pe_blob[0].private_service_connection[0].private_ip_address : null
 }
 
+output "storage_name" {
+  description = "The primary blob endpoint."
+  value       = azurerm_storage_account.storage_account.primary_blob_endpoint
+  }
+  
 #output "primary_blob_endpoint" {
 #  value = azurerm_storage_account.storage_account.primary_blob_endpoint
 #}

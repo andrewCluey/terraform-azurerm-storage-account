@@ -2,11 +2,14 @@
 # terraform-azurerm-storage-account
 
 Creates a new Storage Account with option to create containers and Blob Private Endpoint.
+
+Changes in this version:
+  - Removed Private Endpoint resources. Use the separate private\_endpoint module for each PE required.
+
 Future changes include:
-  - Network ACL options.
+  - Network ACL options
   - Option to create Queues and Tables
-  - Ability to create private endpoints for other endpoint types (file, table etc).
-  - add additional options for choosing doifferent file authentication methods (AD)
+  - add additional options for choosing different file authentication methods (AD)
   - Options to change tier and protocol for shares.
 
 ## Example - default
@@ -15,7 +18,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "= 3.10.0"
+      version = "= 3.20.0"
     }
   }
 }
@@ -37,7 +40,6 @@ module "storage_account" {
 
   storage_account_name    = "sasimple83e32q"
   sa_resource_group_name  = azurerm_resource_group.rg_testpe.name
-  blob_containers         = local.blob_containers_tocreate
 }
 ```
 
@@ -125,10 +127,7 @@ output "private_endpoint_ip_address" {
 | <a name="input_bypass_services"></a> [bypass\_services](#input\_bypass\_services) | Specifies whether traffic is bypassed for Logging/Metrics/AzureServices. Valid options are any combination of Logging, Metrics, AzureServices. Empty list to remove it. | `list(string)` | `[]` | no |
 | <a name="input_datalake_v2"></a> [datalake\_v2](#input\_datalake\_v2) | Enabled Hierarchical name space for Data Lake Storage Gen 2 | `bool` | `false` | no |
 | <a name="input_default_action"></a> [default\_action](#input\_default\_action) | Specifies the default action of allow or deny when no other rules match. Valid options are Deny or Allow. | `string` | `"Allow"` | no |
-| <a name="input_deploy_private_endpoint"></a> [deploy\_private\_endpoint](#input\_deploy\_private\_endpoint) | Deploy a private endopoint with the storage accoubnt. True/False. | `bool` | `false` | no |
 | <a name="input_location"></a> [location](#input\_location) | The Azure Region of where the Storage Account & Private Endpoint are to be created. | `string` | `"westeurope"` | no |
-| <a name="input_pe_subnet_id"></a> [pe\_subnet\_id](#input\_pe\_subnet\_id) | The ID of the subnet where the Private Endpoint will be created. | `string` | `""` | no |
-| <a name="input_private_dns_zone"></a> [private\_dns\_zone](#input\_private\_dns\_zone) | The name and ID of the privatelink DNS zone in Azure to register the Private Endpoint resource type.<br>  Requires an input map object. EXAMPLE:<br>  private-dns\_zone = {<br>    name = "privatelink.blob.azure.windows.net"<br>    id   = "hyoiuhyou-8y98/uhi"<br>  } | `any` | `{}` | no |
 | <a name="input_repl_type"></a> [repl\_type](#input\_repl\_type) | The replication type required for the new Storage Account. Options are LRS; GRS; RAGRS; ZRS | `string` | `"GRS"` | no |
 | <a name="input_sa_resource_group_name"></a> [sa\_resource\_group\_name](#input\_sa\_resource\_group\_name) | The name of a Resource Group to deploy the new Storage Account into. | `string` | n/a | yes |
 | <a name="input_storage_account_name"></a> [storage\_account\_name](#input\_storage\_account\_name) | The name to assign to the new Storage Account. | `string` | n/a | yes |
@@ -140,10 +139,9 @@ output "private_endpoint_ip_address" {
 
 | Name | Description |
 |------|-------------|
-| <a name="output_blobs"></a> [blobs](#output\_blobs) | A list of all the blobs that have been created (if specified). |
+| <a name="output_containers"></a> [containers](#output\_containers) | A list of all the blob containers that have been created (if specified). |
 | <a name="output_id"></a> [id](#output\_id) | The ID of the newly created Storage Account. |
 | <a name="output_primary_blob_endpoint"></a> [primary\_blob\_endpoint](#output\_primary\_blob\_endpoint) | The endpoint URL for blob storage in the primary location. |
-| <a name="output_private_endpoint_ip_address"></a> [private\_endpoint\_ip\_address](#output\_private\_endpoint\_ip\_address) | The IP Address of the Private Endpoint. |
 | <a name="output_shares"></a> [shares](#output\_shares) | A list of all the blobs that have been created (if specified). |
 | <a name="output_storage_account_name"></a> [storage\_account\_name](#output\_storage\_account\_name) | The name of the new Storage Account. |
 | <a name="output_storage_name"></a> [storage\_name](#output\_storage\_name) | The primary blob endpoint. |

@@ -2,7 +2,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "= 3.10.0"
+      version = "= 3.20.0"
     }
   }
 }
@@ -24,5 +24,4 @@ module "storage_account" {
 
   storage_account_name    = "sasimple83e32q"
   sa_resource_group_name  = azurerm_resource_group.rg_testpe.name
-  blob_containers         = local.blob_containers_tocreate
 }

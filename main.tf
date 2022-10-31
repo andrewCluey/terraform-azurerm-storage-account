@@ -2,14 +2,28 @@
  * # terraform-azurerm-storage-account
  *
  * Creates a new Storage Account with option to create containers and Blob Private Endpoint.
+ *
+ * Changes in this version:
+ *   - Removed Private Endpoint resources. Use the separate private_endpoint module for each PE required.
+ *
+ *
  * Future changes include:
- *   - Network ACL options.
- *   - Option to create File shares, Queues and Tables
+ *   - Network ACL options
+ *   - Option to create Queues and Tables
+ *   - add additional options for choosing different file authentication methods (AD)
+ *   - Options to change tier and protocol for shares.
  */
 
-############################
-# Create the Storage Account
-############################
+
+locals {
+  set_az_file_auth         = var.storage_shares != [] ? true : false # Is var.storage_shares empty list or not?
+  file_authentication_type = "AADDS"
+}
+
+
+# --------------------------------------------------------------
+# Create Storage Account
+# --------------------------------------------------------------
 resource "azurerm_storage_account" "storage_account" {
   name                     = var.storage_account_name
   resource_group_name      = var.sa_resource_group_name
@@ -19,41 +33,66 @@ resource "azurerm_storage_account" "storage_account" {
   is_hns_enabled           = var.datalake_v2
   tags                     = var.tags
   min_tls_version          = var.tls_ver
+
+  #dynamic "azure_files_authentication" {
+  #  for_each = local.set_az_file_auth == true ? [local.file_authentication_type] : []
+  #  content {
+  #    directory_type = "AADDS" # improvement to allow either AADDS or AD
+  #  }
+  #}
 }
 
+
+# --------------------------------------------------------------
+# Create Blob Containers
+# --------------------------------------------------------------
 
 # Future improvement, allow other access types.
-resource "azurerm_storage_container" "blob" {
+resource "azurerm_storage_container" "container" {
   for_each              = toset(var.blob_containers)
-  name                  = each.value
+  name                  = each.key
   storage_account_name  = azurerm_storage_account.storage_account.name
   container_access_type = "private"
+  depends_on = [
+    azurerm_storage_account.storage_account,
+  ]
 }
 
-###############################################################
-# Creates a new Private Endpoint for the default blob container
-###############################################################
 
-resource "azurerm_private_endpoint" "pe_blob" {
-  count               = var.deploy_private_endpoint == true ? 1 : 0 # IF var.deploy_private_endpoint IS equal to TRUE, then deploy Private Endpoint.
-  name                = "${var.storage_account_name}-pe"
-  location            = var.location
-  resource_group_name = var.sa_resource_group_name
-  subnet_id           = var.pe_subnet_id
+# --------------------------------------------------------------
+# Create Storage Shares
+# --------------------------------------------------------------
 
-  private_service_connection {
-    name                           = "${var.storage_account_name}-pe-connection"
-    is_manual_connection           = false
-    private_connection_resource_id = azurerm_storage_account.storage_account.id
-    subresource_names              = ["blob"]
+# Future improvement, options to change tier, protocol & ACL.
+resource "azurerm_storage_share" "share" {
+  for_each             = toset(var.storage_shares)
+  name                 = each.key
+  storage_account_name = azurerm_storage_account.storage_account.name
+  quota                = 50
+  access_tier          = "Hot"
+  enabled_protocol     = "SMB"
+  /*
+  acl {
+    id = "MTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTI"
+
+    access_policy {
+      permissions = "rwdl"
+      start       = "2019-07-02T09:38:21.0000000Z"
+      expiry      = "2019-07-02T10:38:21.0000000Z"
+    }
   }
-
-  private_dns_zone_group {
-    name                 = var.private_dns_zone.name
-    private_dns_zone_ids = [var.private_dns_zone.id]
-  }
+  */
 }
 
-### 
-# Network security
-###
+
+# --------------------------------------------------------------
+# Network rules
+# --------------------------------------------------------------
+resource "azurerm_storage_account_network_rules" "net_rules" {
+  storage_account_id         = azurerm_storage_account.storage_account.id
+  default_action             = var.default_action
+  ip_rules                   = var.allowed_public_ip
+  virtual_network_subnet_ids = var.allowed_subnet_ids
+  bypass                     = var.bypass_services
+}
+

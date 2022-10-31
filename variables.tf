@@ -25,6 +25,7 @@ variable "repl_type" {
   description = "The replication type required for the new Storage Account. Options are LRS; GRS; RAGRS; ZRS"
   type        = string
   default     = "GRS"
+  # add validation
 }
 
 variable "account_tier" {
@@ -44,42 +45,10 @@ variable "blob_containers" {
   default     = []
 }
 
-
 variable "datalake_v2" {
-  description = "Enabled Hierarchical name space for Data Lake Storage gen 2"
+  description = "Enabled Hierarchical name space for Data Lake Storage Gen 2"
   type        = bool
   default     = false
-}
-
-/*
-## Removed this variable. Fixed default container as Blob.
-# Will add new feature to include deployment of other storage resources such as files/queues etc
-
-variable "resource_type" {
-  description = "Type : LIST. The Container type to create. Can be blob, file, queue, table."
-  type        = list(string)
-  default     = ["blob"]
-}
-*/
-
-
-variable "pe_subnet_id" {
-  description = "The ID of the subnet where the Private Endpoint will be created."
-  type        = string
-  default     = ""
-}
-
-variable "private_dns_zone" {
-  type        = any
-  default     = {}
-  description = <<EOF
-  The name and ID of the privatelink DNS zone in Azure to register the Private Endpoint resource type.
-  Requires an input map object. EXAMPLE:
-  private-dns_zone = {
-    name = "privatelink.blob.azure.windows.net"
-    id   = "hyoiuhyou-8y98/uhi"
-  }
-EOF
 }
 
 variable "tls_ver" {
@@ -88,9 +57,34 @@ variable "tls_ver" {
   default     = "TLS1_2"
 }
 
-
-variable "deploy_private_endpoint" {
-  type        = bool
-  description = "Deploy a private endopoint with the storage accoubnt. True/False."
-  default     = false
+variable "storage_shares" {
+  type        = list(string)
+  description = "A list of Shares to create wqithin the new Storage Acount."
+  default     = []
 }
+
+variable "default_action" {
+  type        = string
+  description = "Specifies the default action of allow or deny when no other rules match. Valid options are Deny or Allow."
+  default     = "Allow"
+}
+
+variable "allowed_public_ip" {
+  type        = list(string)
+  description = "A list of public IP or IP ranges in CIDR Format. Private IP Addresses are not permitted."
+  default     = []
+}
+
+variable "bypass_services" {
+  type        = list(string)
+  description = "Specifies whether traffic is bypassed for Logging/Metrics/AzureServices. Valid options are any combination of Logging, Metrics, AzureServices. Empty list to remove it."
+  default     = []
+}
+
+variable "allowed_subnet_ids" {
+  type        = list(string)
+  description = "A list of virtual network subnet ids to to secure the storage account."
+  default     = []
+}
+
+

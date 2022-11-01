@@ -4,7 +4,8 @@
  * Creates a new Storage Account with option to create containers and Blob Private Endpoint.
  *
  * Changes in this version:
- *   - Removed Private Endpoint resources. Use the separate private_endpoint module for each PE required.
+ *   - Breaking changes from v2.x
+ *   - Removed Private Endpoint resources. Use the separate private_endpoint module if you need a PE.
  *
  *
  * Future changes include:

@@ -36,8 +36,10 @@ resource "azurerm_resource_group" "rg_testpe" {
 # Also, we can use `locals` to carry out any post-processing of Outputs
 # in preparation for writing test assertions.
 locals {
-  shares_to_create      = ["default", "test", "b-share"]
-  containers_to_create  = ["default", "blob-c", "blob-b"]
+  shares_to_create     = ["default", "test", "b-share"]
+  containers_to_create = ["default", "blob-c", "blob-b"]
+  queues_to_create     = ["dev-queue", "app-queue"]
+  tables_to_create     = ["appTable", "devTable"]
 }
 
 
@@ -50,6 +52,8 @@ module "storage_account" {
   sa_resource_group_name = azurerm_resource_group.rg_testpe.name
   location               = azurerm_resource_group.rg_testpe.location
   storage_shares         = local.shares_to_create
+  storage_tables         = local.tables_to_create
+  storage_queues         = local.queues_to_create
   blob_containers        = local.containers_to_create
   repl_type              = "ZRS"
   default_action         = "Allow"
@@ -64,11 +68,14 @@ module "storage_account" {
 locals {
   # We don't know in what order the containers will be created.
   # So we `sort` the output alphabetically. 
-  sorted_shares_to_create = sort(local.shares_to_create)
-  sort_share_output       = sort(module.storage_account.shares)
-
+  sorted_shares_to_create     = sort(local.shares_to_create)
+  sort_share_output           = sort(module.storage_account.shares)
   sorted_containers_to_create = sort(local.containers_to_create)
   sorted_containers_output    = sort(module.storage_account.containers)
+  sorted_tables_to_create     = sort(local.tables_to_create)
+  sorted_tables_output        = sort(module.storage_account.tables)
+  sorted_queues_to_create     = sort(local.queues_to_create)
+  sorted_queues_output        = sort(module.storage_account.queues)
 }
 
 resource "test_assertions" "storage_types" {
@@ -88,5 +95,17 @@ resource "test_assertions" "storage_types" {
     description = "Confirm the names of the storage Containers created and that it matches what we expect."
     want        = local.sorted_containers_to_create
     got         = local.sorted_containers_output
+  }
+
+  equal "tables_created" {
+    description = "Confirm the names of the storage tables created and that it matches what we expect."
+    want        = local.sorted_tables_to_create
+    got         = local.sorted_tables_output
+  }
+
+  equal "queues_created" {
+    description = "Confirm the names of the storage queues created and that it matches what we expect."
+    want        = local.sorted_queues_to_create
+    got         = local.sorted_queues_output
   }
 }

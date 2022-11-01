@@ -25,11 +25,11 @@ content: |-
     {{ include "examples/default/main.tf" }}
   ```
 
-  ## Example - with PE
-
+  ## Example - Create Shares, Containers, Queues & Tables
   ```hcl
-  {{ include "examples/pe/main.tf" }}
+  {{ include "examples/full/main.tf" }}
   ```
+
 
   {{ .Inputs }}
 

@@ -10,7 +10,7 @@ variable "tags" {
 variable "location" {
   description = "The Azure Region of where the Storage Account & Private Endpoint are to be created."
   type        = string
-  default     = "westeurope"
+  default     = "uksouth"
 }
 
 # ##########################################
@@ -52,16 +52,29 @@ variable "datalake_v2" {
 }
 
 variable "tls_ver" {
-  description = "Minimum overison of TLS that must be used to connect to the storage account"
+  description = "Minimum version of TLS that must be used to connect to the storage account"
   type        = string
   default     = "TLS1_2"
 }
 
 variable "storage_shares" {
   type        = list(string)
-  description = "A list of Shares to create wqithin the new Storage Acount."
+  description = "A list of Shares to create within the new Storage Acount."
   default     = []
 }
+
+variable "storage_queues" {
+  type        = list(string)
+  description = "A list of Storage Queues to be created."
+  default     = []
+}
+
+variable "storage_tables" {
+  type        = list(string)
+  description = "A list of Storage Tables to be created."
+  default     = []
+}
+
 
 variable "default_action" {
   type        = string
@@ -86,5 +99,3 @@ variable "allowed_subnet_ids" {
   description = "A list of virtual network subnet ids to to secure the storage account."
   default     = []
 }
-
-

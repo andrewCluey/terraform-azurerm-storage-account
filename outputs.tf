@@ -9,8 +9,18 @@ output "containers" {
 }
 
 output "shares" {
-  description = "A list of all the blobs that have been created (if specified)."
+  description = "A list of all the File Shares that have been created (if specified)."
   value       = [for k in azurerm_storage_share.share : k.name]
+}
+
+output "queues" {
+  description = "A list of all the storage queues that have been created (if specified)."
+  value       = [for k in azurerm_storage_queue.queue : k.name]
+}
+
+output "tables" {
+  description = "A list of all the storage tables that have been created (if specified)."
+  value       = [for k in azurerm_storage_table.table : k.name]
 }
 
 output "id" {

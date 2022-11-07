@@ -25,14 +25,14 @@
 # Create Storage Account
 # --------------------------------------------------------------
 resource "azurerm_storage_account" "storage_account" {
-  name                          = var.storage_account_name
-  resource_group_name           = var.sa_resource_group_name
-  location                      = var.location
-  account_tier                  = var.account_tier
-  account_replication_type      = var.repl_type
-  is_hns_enabled                = var.datalake_v2
-  tags                          = var.tags
-  min_tls_version               = var.tls_ver
+  name                     = var.storage_account_name
+  resource_group_name      = var.sa_resource_group_name
+  location                 = var.location
+  account_tier             = var.account_tier
+  account_replication_type = var.repl_type
+  is_hns_enabled           = var.datalake_v2
+  tags                     = var.tags
+  min_tls_version          = var.tls_ver
   #public_network_access_enabled = var.public_network_access_enabled   # requires later provider version.. Future release.
 
   #dynamic "azure_files_authentication" {

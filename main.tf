@@ -16,6 +16,7 @@
  *   - Add options for choosing different file authentication methods (AD)
  *   - Options to change tier and protocol for shares.
  *   - Identity-based authentication (Active Directory) for Azure file shares
+ *   - Add dynamic block for Table Access Policy
  *   
  */
 

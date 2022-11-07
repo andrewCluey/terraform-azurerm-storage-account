@@ -15,6 +15,7 @@ Future changes to include:
   - Add options for choosing different file authentication methods (AD)
   - Options to change tier and protocol for shares.
   - Identity-based authentication (Active Directory) for Azure file shares
+  - Add dynamic block for Table Access Policy
 
 ## Example - default
 ```hcl
@@ -67,7 +68,7 @@ provider "azurerm" {
 # Storage Account Module needs a Resource Group
 # --------------------------------------------------------------
 
-resource "azurerm_resource_group" "rg_testpe" {
+resource "azurerm_resource_group" "rg" {
   name     = "rg-exfull-sa"
   location = "uksouth"
 }
@@ -85,8 +86,8 @@ module "storage_account" {
   #version = "3.0.0"
   
   storage_account_name   = "samodexdev87t7t"
-  location               = azurerm_resource_group.rg_testpe.location
-  sa_resource_group_name = azurerm_resource_group.rg_testpe.name
+  location               = azurerm_resource_group.rg.location
+  sa_resource_group_name = azurerm_resource_group.rg.name
   blob_containers        = ["z-blob", "default", "autotest", "x-blob"]
   storage_queues         = ["dev-queue", "app-queue"]
   storage_tables         = ["appTable", "devTable"]

@@ -3,7 +3,7 @@
  *
  * Creates a new Storage Account with option to create containers and Blob Private Endpoint.
  *
- * This module does not currently support implenmentation of Access Policies for tables, Containers, queues etc.
+ * This module does not currently support implementation of Access Policies for tables, Containers, queues etc.
  * Please use RBAC instead.
  * 
  * Changes in this version:

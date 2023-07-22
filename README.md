@@ -105,7 +105,7 @@ module "storage_account" {
   storage_tables         = ["appTable", "devTable"]
   storage_shares         = ["share-f", "s-drive"]
   default_action         = "Deny"
-  bypass_services        = []                # Try to avoid adding bypass services as this opens up access to ALL Azure customers.
+  bypass_services        = []
   allowed_public_ip      = [data.http.ip.response_body] # If default_action is set to `Deny`, ensure the public IP where Terraform runs from still has access.
 }
 
